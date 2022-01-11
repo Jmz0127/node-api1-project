@@ -71,6 +71,19 @@ server.get('/api/users/:id', (req, res) => {
 		});
 });
 
+//Delete api/users/:id Removes the user with the specified id and returns the deleted user.
+server.delete('/api/users/:id', async (req, res) => {
+	const possibleUser = await User.findById(req.params.id);
+	if (!possibleUser) {
+		res.status(404).json({
+			message: 'not The user with the specified ID does not exist'
+		});
+	} else {
+		const deletedUser = await User.remove(req.params.id);
+		res.status(200).json(deletedUser);
+	}
+});
+
 //catch all statement put after all of the other requests
 server.use('*', (req, res) => {
 	res.status(404).json({
