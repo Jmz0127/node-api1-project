@@ -2,6 +2,7 @@
 
 //import express from 'express' in ES6
 const express = require('express');
+const res = require('express/lib/response');
 const { restart } = require('nodemon');
 const User = require('./users/model.js');
 
@@ -9,9 +10,31 @@ const User = require('./users/model.js');
 const server = express();
 
 //need our global middleware!!
-server.use(express.json()); //this parses json from the requests
+server.use(express.json()); //this parses json from the requests. need to do this when were adding things to the body
 
 //endpoints
+
+//POST api/users Creates a user using the information sent inside the request body
+server.post('/api/users', (req, res) => {
+	const user = req.body;
+	if (!user.name || !user.bio) {
+		res.status(400).json({
+			message: 'Please provide name and bio for the user'
+		});
+	} else {
+		User.insert(user)
+			.then((createdUser) => {
+				res.status(201).json(createdUser);
+			})
+			.catch((err) => {
+				res.status(500).json({
+					message: 'error creating user',
+					err: err.message
+					//can also add stack: err.stack on this line to show you where the error is happening, if there are any errors that is
+				});
+			});
+	}
+});
 
 //GET api/users (fetch all users)
 server.get('/api/users', (req, res) => {
