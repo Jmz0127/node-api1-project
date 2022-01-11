@@ -2,8 +2,6 @@
 
 //import express from 'express' in ES6
 const express = require('express');
-const res = require('express/lib/response');
-const { restart } = require('nodemon');
 const User = require('./users/model.js');
 
 //instance of express app
@@ -77,7 +75,7 @@ server.delete('/api/users/:id', async (req, res) => {
 		const possibleUser = await User.findById(req.params.id);
 		if (!possibleUser) {
 			res.status(404).json({
-				message: 'not The user with the specified ID does not exist'
+				message: 'The user with the specified ID does not exist'
 			});
 		} else {
 			const deletedUser = await User.remove(req.params.id);
@@ -91,6 +89,26 @@ server.delete('/api/users/:id', async (req, res) => {
 		});
 	}
 });
+
+//another option for delete is the below
+/*
+server.delete('/api/users/:id', async (req, res) => {
+const possibleUser = await User.findById(req.params.id);
+if (!possibleUser) {
+	res.status(404).json({
+		message: 'The user with the specified ID does not exist'
+	})
+} else {
+	const deletedUser = await User.remove(possibleUser.id);
+	res.status(200).json(deletedUser)
+}
+});
+
+
+
+
+
+*/
 
 //Put  api/users/:id Updates the user with the specified id using data from the request body. Returns the modified user
 server.put('/api/users/:id', async (req, res) => {
