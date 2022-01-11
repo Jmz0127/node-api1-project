@@ -19,7 +19,11 @@ server.get('/api/users', (req, res) => {
 			res.json(users);
 		})
 		.catch((err) => {
-			res.status(500).json({ message: 'error getting users' });
+			res.status(500).json({
+				message: 'error getting users',
+				err: err.message
+				//can also add stack: err.stack on this line to show you where the error is happening, if there are any errors that is
+			});
 		});
 });
 
