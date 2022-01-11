@@ -2,6 +2,7 @@
 
 //import express from 'express' in ES6
 const express = require('express');
+const { restart } = require('nodemon');
 const User = require('./users/model.js');
 
 //instance of express app
@@ -20,7 +21,27 @@ server.get('/api/users', (req, res) => {
 		})
 		.catch((err) => {
 			res.status(500).json({
-				message: 'error getting users',
+				message: 'The users information could not be retrieved',
+				err: err.message
+				//can also add stack: err.stack on this line to show you where the error is happening, if there are any errors that is
+			});
+		});
+});
+
+//Get api/users/:id (fetch users by an id)
+server.get('/api/users/:id', (req, res) => {
+	User.findById(req.params.id)
+		.then((user) => {
+			if (!user) {
+				res.status(404).json({
+					message: 'The user with the specified ID does not exist'
+				});
+			}
+			res.json(user);
+		})
+		.catch((err) => {
+			res.status(500).json({
+				message: 'error getting user',
 				err: err.message
 				//can also add stack: err.stack on this line to show you where the error is happening, if there are any errors that is
 			});
