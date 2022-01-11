@@ -73,14 +73,22 @@ server.get('/api/users/:id', (req, res) => {
 
 //Delete api/users/:id Removes the user with the specified id and returns the deleted user.
 server.delete('/api/users/:id', async (req, res) => {
-	const possibleUser = await User.findById(req.params.id);
-	if (!possibleUser) {
-		res.status(404).json({
-			message: 'not The user with the specified ID does not exist'
+	try {
+		const possibleUser = await User.findById(req.params.id);
+		if (!possibleUser) {
+			res.status(404).json({
+				message: 'not The user with the specified ID does not exist'
+			});
+		} else {
+			const deletedUser = await User.remove(req.params.id);
+			res.status(200).json(deletedUser);
+		}
+	} catch (err) {
+		res.status(500).json({
+			message: 'error deleting user',
+			err: err.message
+			//can also add stack: err.stack on this line to show you where the error is happening, if there are any errors that is
 		});
-	} else {
-		const deletedUser = await User.remove(req.params.id);
-		res.status(200).json(deletedUser);
 	}
 });
 
